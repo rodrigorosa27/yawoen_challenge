@@ -5,20 +5,18 @@ import com.neoway.http.ResourcePath;
 import com.neoway.persistence.database.MorphiaService;
 import com.neoway.persistence.database.dao.CompanyDAO;
 import com.neoway.persistence.model.Company;
+import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
-import javax.ejb.EJB;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.util.Base64;
 import java.util.List;
 
+
+@Log4j
 @Path(ResourcePath.ROOT)
 public class CompanyService {
 
@@ -51,14 +49,18 @@ public class CompanyService {
     @Path(ResourcePath.SERVICE_COMPANY)
     @Consumes(MediaType.TEXT_PLAIN)
     public final Response create(final InputStream inputStream) {
-        List<Company> companyList;
+        List<Company> incomingCompanyList;
         try {
-            companyList = GenericCompanyReader.readStream(inputStream);
-            for(Company company: companyList) {
-                if (companyDAO.filterCompany(company.getName(), company.getZip()).size() == 0) {
-                    companyDAO.save(company);
+            incomingCompanyList = GenericCompanyReader.readStream(inputStream);
+            for(Company newCompany: incomingCompanyList) {
+                List<Company> companyList = companyDAO.filterCompany(newCompany.getName(), newCompany.getZip());
+                log.warn(companyList.get(0));
+                if (companyList.size() == 0) {
+                    companyDAO.save(newCompany);
                 }else{
-                    //FIXME do update if record exists
+                    Company company = companyList.get(0);
+                    company.setWebsite(newCompany.getWebsite());
+                    companyDAO.save(company);
                 }
             }
         } catch (IOException e) {
