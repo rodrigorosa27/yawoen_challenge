@@ -54,7 +54,6 @@ public class CompanyService {
             incomingCompanyList = GenericCompanyReader.readStream(inputStream);
             for(Company newCompany: incomingCompanyList) {
                 List<Company> companyList = companyDAO.filterCompany(newCompany.getName(), newCompany.getZip());
-                log.warn(companyList.get(0));
                 if (companyList.size() == 0) {
                     companyDAO.save(newCompany);
                 }else{
