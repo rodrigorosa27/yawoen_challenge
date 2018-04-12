@@ -29,18 +29,18 @@ public class Loader {
     @PostConstruct
     public void startLoader() throws IOException {
 
-        List<Company> companyList;
+        List<Company> fileCompanyList;
         CompanyDAO companyDAO = new CompanyDAO(Company.class, morphiaService.getDatastore());
 
         if(configuration.getProperty("Q1_CATALOG_PATH").isEmpty()){
-             companyList = GenericCompanyReader.readStream(SAMPLE_FILE);
+            fileCompanyList = GenericCompanyReader.readStream(SAMPLE_FILE);
         }else{
             InputStream is = new FileInputStream(new File(configuration.getProperty("Q1_CATALOG_PATH")));
-            companyList = GenericCompanyReader.readStream(is);
+            fileCompanyList = GenericCompanyReader.readStream(is);
         }
 
-        for(Company company: companyList) {
-            if (companyDAO.filterCompany(company.getName(), company.getZip()).size() == 0) {
+        for(Company company: fileCompanyList) {
+            if (companyDAO.findCompanyByNameAndZip(company.getName(), company.getZip()) == null) {
                 companyDAO.save(company);
             }
         }

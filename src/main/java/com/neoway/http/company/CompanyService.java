@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-
 @Log4j
 @Path(ResourcePath.ROOT)
 public class CompanyService {
@@ -38,26 +37,25 @@ public class CompanyService {
             return Response.status(Response.Status.CONFLICT).entity("ZIP value are mandatory!").build();
         }
 
-        List<Company> companyList = companyDAO.filterCompany(name, zip);
-        if (companyList.size() == 0) {
+        Company company = companyDAO.findCompanyByNameAndZip(name, zip);
+        if (company == null) {
             return Response.status(Response.Status.CONFLICT).entity("No records found for: \nNAME: " +name +"\nZIP: " +zip).build();
         }
-        return Response.status(Response.Status.OK).entity(companyList).build();
+        return Response.status(Response.Status.OK).entity(company).build();
     }
 
     @POST
     @Path(ResourcePath.SERVICE_COMPANY)
-    @Consumes(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.TEXT_PLAIN)
     public final Response create(final InputStream inputStream) {
         List<Company> incomingCompanyList;
         try {
             incomingCompanyList = GenericCompanyReader.readStream(inputStream);
             for(Company newCompany: incomingCompanyList) {
-                List<Company> companyList = companyDAO.filterCompany(newCompany.getName(), newCompany.getZip());
-                if (companyList.size() == 0) {
+                Company company = companyDAO.findCompanyByNameAndZip(newCompany.getName(), newCompany.getZip());
+                if (company == null) {
                     companyDAO.save(newCompany);
                 }else{
-                    Company company = companyList.get(0);
                     company.setWebsite(newCompany.getWebsite());
                     companyDAO.save(company);
                 }

@@ -19,23 +19,21 @@ public class CompanyDAO extends BasicDAO<Company, ObjectId> {
         super((Class<Company>) company, ds);
     }
 
-    public final List<Company> filterCompany (final String name, final String zip){
-        List<Company> companyList = new ArrayList<>();
+    public final Company findCompanyByNameAndZip(final String name, final String zip){
         if((name != null && !name.isEmpty()) && (zip != null && !zip.isEmpty())){
-            companyList = buildQuery(name, zip).asList();
-        }
-        return companyList;
+            Query<Company> companyQuery = this.getDatastore().createQuery(Company.class);
+                companyQuery.and(
+                        companyQuery.criteria("name").containsIgnoreCase(name),
+                        companyQuery.criteria("zip").equal(zip)
+                );
+                return companyQuery.get();
+            }
+        return null;
     }
 
-    private Query<Company> buildQuery(final String name, final String zip) {
+    public final List<Company> findAll (){
         Query<Company> companyQuery = this.getDatastore().createQuery(Company.class);
-        if((name != null && !name.isEmpty()) && (zip != null && !zip.isEmpty())){
-            companyQuery.and(
-                    companyQuery.criteria("name").containsIgnoreCase(name),
-                    companyQuery.criteria("zip").equal(zip)
-            );
-        }
-        return companyQuery;
+        return companyQuery.asList();
     }
 
 }

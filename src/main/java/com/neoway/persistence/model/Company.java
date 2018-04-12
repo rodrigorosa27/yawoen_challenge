@@ -1,7 +1,10 @@
 package com.neoway.persistence.model;
 
 import org.bson.types.ObjectId;
-import org.mongodb.morphia.annotations.*;
+import org.mongodb.morphia.annotations.Entity;
+import org.mongodb.morphia.annotations.Id;
+import org.mongodb.morphia.annotations.Indexed;
+import org.mongodb.morphia.annotations.Property;
 
 @Entity("companies")
 public class Company {
@@ -10,9 +13,10 @@ public class Company {
     @Property("id")
     private ObjectId id;
 
+    @Indexed
     private String name;
 
-    @Indexed(options = @IndexOptions(unique = true))
+    @Indexed
     private String zip;
 
     private String website;
