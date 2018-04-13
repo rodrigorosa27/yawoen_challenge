@@ -1,4 +1,4 @@
-package com.neoway.main;
+package com.neoway;
 
 import com.neoway.csv.GenericCompanyReader;
 import com.neoway.persistence.database.MorphiaService;

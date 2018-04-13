@@ -1,7 +1,7 @@
 package com.neoway.persistence.database;
 
 import com.mongodb.MongoClient;
-import com.neoway.main.Configuration;
+import com.neoway.Configuration;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
 

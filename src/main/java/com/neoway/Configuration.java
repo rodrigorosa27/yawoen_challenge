@@ -1,4 +1,4 @@
-package com.neoway.main;
+package com.neoway;
 
 import java.io.IOException;
 import java.util.Properties;
