@@ -8,7 +8,6 @@ import org.mongodb.morphia.dao.BasicDAO;
 import org.mongodb.morphia.query.Query;
 
 import javax.ejb.LocalBean;
-import java.util.ArrayList;
 import java.util.List;
 
 @Log4j
@@ -19,8 +18,8 @@ public class CompanyDAO extends BasicDAO<Company, ObjectId> {
         super((Class<Company>) company, ds);
     }
 
-    public final Company findCompanyByNameAndZip(final String name, final String zip){
-        if((name != null && !name.isEmpty()) && (zip != null && !zip.isEmpty())){
+    public final Company findCompanyByNameAndZip(final String name, final String zip) {
+        if (name != null && !name.isEmpty() && zip != null && !zip.isEmpty()) {
             Query<Company> companyQuery = this.getDatastore().createQuery(Company.class);
                 companyQuery.and(
                         companyQuery.criteria("name").containsIgnoreCase(name),
@@ -31,7 +30,7 @@ public class CompanyDAO extends BasicDAO<Company, ObjectId> {
         return null;
     }
 
-    public final List<Company> findAll (){
+    public final List<Company> findAll() {
         Query<Company> companyQuery = this.getDatastore().createQuery(Company.class);
         return companyQuery.asList();
     }

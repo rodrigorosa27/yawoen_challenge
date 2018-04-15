@@ -1,6 +1,6 @@
 package com.neoway.http;
 
-public class ResourcePath {
+public final class ResourcePath {
 
     public static final String ROOT = "/";
 

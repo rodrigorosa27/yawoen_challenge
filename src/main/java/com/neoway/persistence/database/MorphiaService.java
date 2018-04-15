@@ -17,7 +17,7 @@ public class MorphiaService {
     private Configuration configuration = Configuration.getInstance();
 
     public MorphiaService() {
-        MongoClient mongoClient = new MongoClient(configuration.getProperty("DATABASE_HOST") +":" +configuration.getProperty("DATABASE_PORT"));
+        MongoClient mongoClient = new MongoClient(configuration.getProperty("DATABASE_HOST") + ":" + configuration.getProperty("DATABASE_PORT"));
         this.morphia = new Morphia();
         this.datastore = morphia.createDatastore(mongoClient, configuration.getProperty("DATABASE_NAME"));
     }
@@ -26,15 +26,15 @@ public class MorphiaService {
         return morphia;
     }
 
-    public void setMorphia(Morphia morphia) {
-        this.morphia = morphia;
+    public void setMorphia(final Morphia theMorphia) {
+        this.morphia = theMorphia;
     }
 
     public Datastore getDatastore() {
         return datastore;
     }
 
-    public void setDatastore(final Datastore datastore) {
-        this.datastore = datastore;
+    public void setDatastore(final Datastore theDatastore) {
+        this.datastore = theDatastore;
     }
 }

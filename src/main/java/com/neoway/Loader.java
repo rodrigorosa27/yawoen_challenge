@@ -24,7 +24,7 @@ public class Loader {
 
     private Configuration configuration = Configuration.getInstance();
 
-    private final InputStream SAMPLE_FILE = Configuration.class.getClassLoader().getResourceAsStream("q1_catalog.csv");
+    private final InputStream sampleFile = Configuration.class.getClassLoader().getResourceAsStream("q1_catalog.csv");
 
     @PostConstruct
     public void startLoader() throws IOException {
@@ -32,14 +32,14 @@ public class Loader {
         List<Company> fileCompanyList;
         CompanyDAO companyDAO = new CompanyDAO(Company.class, morphiaService.getDatastore());
 
-        if(configuration.getProperty("Q1_CATALOG_PATH").isEmpty()){
-            fileCompanyList = GenericCompanyReader.readStream(SAMPLE_FILE);
-        }else{
+        if (configuration.getProperty("Q1_CATALOG_PATH").isEmpty()) {
+            fileCompanyList = GenericCompanyReader.readStream(sampleFile);
+        } else {
             InputStream is = new FileInputStream(new File(configuration.getProperty("Q1_CATALOG_PATH")));
             fileCompanyList = GenericCompanyReader.readStream(is);
         }
 
-        for(Company company: fileCompanyList) {
+        for (Company company: fileCompanyList) {
             if (companyDAO.findCompanyByNameAndZip(company.getName(), company.getZip()) == null) {
                 companyDAO.save(company);
             }

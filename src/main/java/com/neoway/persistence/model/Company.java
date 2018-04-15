@@ -33,23 +33,23 @@ public class Company {
         return name;
     }
 
-    public final void setName(String name) {
-        this.name = name;
+    public final void setName(final String theName) {
+        this.name = theName;
     }
 
     public final String getZip() {
         return zip;
     }
 
-    public final void setZip(String zip) {
-        this.zip = zip;
+    public final void setZip(final String theZip) {
+        this.zip = theZip;
     }
 
     public final String getWebsite() {
         return website;
     }
 
-    public final void setWebsite(String website) {
-        this.website = website;
+    public final void setWebsite(final String theWebsite) {
+        this.website = theWebsite;
     }
 }
