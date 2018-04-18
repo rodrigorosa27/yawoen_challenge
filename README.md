@@ -37,7 +37,20 @@ You can provide a part of company name in the query param:
         
 The reponse body:
 
-    
+    {
+     	"id": {
+     		"timestamp": 1524014099,
+     		"machineIdentifier": 14462422,
+     		"processIdentifier": 8996,
+     		"counter": 8806580,
+     		"time": 1524014099000,
+     		"date": 1524014099000,
+     		"timeSecond": 1524014099
+     	},
+     	"name": "redbox",
+     	"zip": "17602",
+     	"website": "http://www.redbox.com/locations/pennsylvania/lancaster/17602/16738"
+     }
 
 TODOs
 -----
