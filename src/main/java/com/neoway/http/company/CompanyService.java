@@ -52,7 +52,6 @@ public class CompanyService {
 
     @POST
     @Path(ResourcePath.SERVICE_COMPANY)
-    @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.TEXT_PLAIN)
     public final Response create(final InputStream inputStream) {
         List<Company> incomingCompanyList;

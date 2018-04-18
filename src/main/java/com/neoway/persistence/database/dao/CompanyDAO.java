@@ -7,11 +7,9 @@ import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.dao.BasicDAO;
 import org.mongodb.morphia.query.Query;
 
-import javax.ejb.LocalBean;
 import java.util.List;
 
 @Log4j
-@LocalBean
 public class CompanyDAO extends BasicDAO<Company, ObjectId> {
 
     public CompanyDAO(final Class<Company> company, final Datastore ds) {
