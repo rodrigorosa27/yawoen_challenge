@@ -1,5 +1,4 @@
 import com.neoway.Configuration;
-import com.neoway.persistence.model.Company;
 import org.junit.Assert;
 import org.junit.Test;
 
