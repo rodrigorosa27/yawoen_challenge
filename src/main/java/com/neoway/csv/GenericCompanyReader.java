@@ -6,12 +6,10 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
 import java.io.BufferedReader;
-import java.io.Reader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.Reader;
+import java.io.IOException;
 import java.util.Locale;
 
 public final class GenericCompanyReader {
@@ -19,10 +17,9 @@ public final class GenericCompanyReader {
     private GenericCompanyReader() {
     }
 
-    private static List<Company> companyList;
+    private static final int ZIP_ALLOWED_SIZE = 5;
 
-    public static List<Company> readStream(final InputStream is) throws IOException {
-        companyList = new ArrayList<>();
+    public static void readStream(final InputStream is, final CompanyReaderListener listener) throws IOException {
         try (
                 Reader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
                 CSVParser csvParser = new CSVParser(reader, CSVFormat.DEFAULT
@@ -33,20 +30,18 @@ public final class GenericCompanyReader {
                         .withIgnoreEmptyLines());
         ) {
             for (CSVRecord csvRecord : csvParser) {
-                if (csvRecord.get("name").isEmpty() || csvRecord.get("addresszip").isEmpty()) {
+                if (csvRecord.get("name").isEmpty() || csvRecord.get("addresszip").isEmpty() || csvRecord.get("addresszip").length() != ZIP_ALLOWED_SIZE) {
                     continue;
                 }
                 Company company = new Company();
-                company.setName(csvRecord.get("name").toLowerCase(Locale.getDefault()));
+                company.setName(csvRecord.get("name").toUpperCase(Locale.getDefault()));
                 company.setZip(csvRecord.get("addresszip"));
                 if (csvParser.getHeaderMap().containsKey("website")) {
                     company.setWebsite(csvRecord.get("website").toLowerCase(Locale.getDefault()));
                 }
-                companyList.add(company);
+                listener.processCompany(company);
             }
         }
-        return companyList;
     }
 
 }
-

@@ -1,5 +1,6 @@
 package com.neoway.http.company;
 
+import com.neoway.csv.CompanyReaderListener;
 import com.neoway.csv.GenericCompanyReader;
 import com.neoway.http.ResourcePath;
 import com.neoway.persistence.database.MorphiaService;
@@ -8,8 +9,8 @@ import com.neoway.persistence.model.Company;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
-import javax.ws.rs.POST;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.Consumes;
@@ -19,11 +20,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
 @Log4j
 @Path(ResourcePath.ROOT)
-public class CompanyService {
+public class CompanyService implements CompanyReaderListener {
 
     private CompanyDAO companyDAO;
 
@@ -52,25 +52,27 @@ public class CompanyService {
 
     @POST
     @Path(ResourcePath.SERVICE_COMPANY)
+    @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.TEXT_PLAIN)
     public final Response create(final InputStream inputStream) {
-        List<Company> incomingCompanyList;
         try {
-            incomingCompanyList = GenericCompanyReader.readStream(inputStream);
-            for (Company newCompany: incomingCompanyList) {
-                Company company = companyDAO.findCompanyByNameAndZip(newCompany.getName(), newCompany.getZip());
-                if (company == null) {
-                    companyDAO.save(newCompany);
-                } else {
-                    company.setWebsite(newCompany.getWebsite());
-                    companyDAO.save(company);
-                }
-            }
+            GenericCompanyReader.readStream(inputStream, this);
         } catch (IOException e) {
             final Throwable rootCause = ExceptionUtils.getRootCause(e);
             throw new WebApplicationException(rootCause, Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(rootCause.getMessage()).build());
         }
         return Response.status(Response.Status.OK).build();
+    }
+
+    @Override
+    public void processCompany(final Company newCompany) {
+        Company company = companyDAO.findCompanyByNameAndZip(newCompany.getName(), newCompany.getZip());
+        if (company == null) {
+            companyDAO.save(newCompany);
+        } else {
+            company.setWebsite(newCompany.getWebsite());
+            companyDAO.save(company);
+        }
     }
 
 }

@@ -1,5 +1,6 @@
 package com.neoway;
 
+import com.neoway.csv.CompanyReaderListener;
 import com.neoway.csv.GenericCompanyReader;
 import com.neoway.persistence.database.MorphiaService;
 import com.neoway.persistence.database.dao.CompanyDAO;
@@ -13,12 +14,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
 @Startup
 @Singleton
 @Log4j
-public class Loader {
+public class Loader implements CompanyReaderListener {
 
     private MorphiaService morphiaService = new MorphiaService();
 
@@ -26,25 +26,25 @@ public class Loader {
 
     private final InputStream sampleFile = Configuration.class.getClassLoader().getResourceAsStream("q1_catalog.csv");
 
+    private CompanyDAO companyDAO;
+
     @PostConstruct
     public void startLoader() throws IOException {
 
-        List<Company> fileCompanyList;
-        CompanyDAO companyDAO = new CompanyDAO(Company.class, morphiaService.getDatastore());
+        companyDAO = new CompanyDAO(Company.class, morphiaService.getDatastore());
 
         if (configuration.getProperty("Q1_CATALOG_PATH").isEmpty()) {
-            fileCompanyList = GenericCompanyReader.readStream(sampleFile);
+            GenericCompanyReader.readStream(sampleFile, this);
         } else {
             InputStream is = new FileInputStream(new File(configuration.getProperty("Q1_CATALOG_PATH")));
-            fileCompanyList = GenericCompanyReader.readStream(is);
+            GenericCompanyReader.readStream(is, this);
         }
-
-        for (Company company: fileCompanyList) {
-            if (companyDAO.findCompanyByNameAndZip(company.getName(), company.getZip()) == null) {
-                companyDAO.save(company);
-            }
-        }
-
     }
 
+    @Override
+    public void processCompany(final Company newCompany) {
+        if (companyDAO.findCompanyByNameAndZip(newCompany.getName(), newCompany.getZip()) == null) {
+            companyDAO.save(newCompany);
+        }
+    }
 }
